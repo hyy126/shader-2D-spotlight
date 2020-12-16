@@ -29,18 +29,20 @@
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
+      //存储偏移量 计算探照灯坐标时使用
       const canvasOffsetX = canvas.offsetLeft;
       const canvasOffsetY = canvas.offsetTop;
 
+      //初始化探照灯位置(纹理)
       let curCanvasPosPercent = {
-        x: 0.5,
-        y: 0.5,
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
       };
 
       //这边可以依据个人情况适当节流
       window.addEventListener("mousemove", (e) => {
-        curCanvasPosPercent.x = Math.max(Math.min((e.pageX - canvasOffsetX) / canvasWidth, 1), 0);
-        curCanvasPosPercent.y = 1 - Math.max(Math.min((e.pageY - canvasOffsetY) / canvasHeight, 1), 0);
+        curCanvasPosPercent.x = Math.max(Math.min(e.pageX - canvasOffsetX, canvasWidth), 0);
+        curCanvasPosPercent.y = canvasHeight - Math.max(Math.min(e.pageY - canvasOffsetY, canvasHeight), 0);
       });
 
       (async function () {
@@ -53,6 +55,7 @@
         const texture = await renderer.loadTexture("xiaowu.png");
         renderer.uniforms.tMap = texture;
 
+        //将画布的大小传给shader 用于像素渲染计算
         renderer.uniforms.canvasWidth = canvasWidth;
         renderer.uniforms.canvasHeight = canvasHeight;
 
@@ -82,14 +85,14 @@
 
         renderer.render();
 
-        function update(t) {
+        function update() {
           //在每一帧获取最新坐标
           renderer.uniforms.xPot = curCanvasPosPercent.x;
           renderer.uniforms.yPot = curCanvasPosPercent.y;
 
           requestAnimationFrame(update);
         }
-        update(0);
+        update();
       })();
     </script>
   </body>

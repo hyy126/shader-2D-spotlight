@@ -5,7 +5,6 @@ attribute vec2 uv;
 varying vec2 vUv;
 
 void main(){
-  gl_PointSize=1.0;
   vUv=uv;
   //vec2 -> vec4
   gl_Position=vec4(a_vertexPosition,1,1);
